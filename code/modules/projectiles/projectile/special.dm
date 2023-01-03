@@ -91,12 +91,12 @@
 			name = "temperature beam"//failsafe
 			icon_state = "temp_4"
 
-
 /obj/item/projectile/temp/on_hit(var/atom/target, var/blocked = 0)//These two could likely check temp protection on the mob
 	..()
 	if(isliving(target))
 		var/mob/living/M = target
-		M.bodytemperature = temperature
+		var/datum/status_effect/E = new /datum/status_effect/temperature_dot(list(M, temperature/10 - 25)) // temperature_step = -25 for 0 temperature, 25 for 500 temperature
+		M.apply_status_effect(E)
 		if(temperature > 500)//emagged
 			M.adjust_fire_stacks(0.5)
 			M.IgniteMob()

@@ -121,3 +121,21 @@
 
 /datum/status_effect/stamina_dot/tick()
 	owner.adjustStaminaLoss(10)
+
+/datum/status_effect/temperature_dot
+	id = "temperature_dot"
+	duration = 300
+	alert_type = null
+	var/temperature_step = 0
+
+/datum/status_effect/temperature_dot/New(list/arguments)
+	..()
+	temperature_step = arguments[2]
+	owner.visible_message("наложено [src.id] на duration=[duration] cекунд с шагом [temperature_step] градусов")
+
+/datum/status_effect/temperature_dot/on_remove()
+	owner.visible_message("кончился эффект [src.id], шаг [temperature_step] градусов")
+
+/datum/status_effect/temperature_dot/tick()
+	owner.bodytemperature = max(owner.bodytemperature + temperature_step, 0)
+	owner.visible_message("температура: [owner.bodytemperature]")

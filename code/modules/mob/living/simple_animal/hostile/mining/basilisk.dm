@@ -42,7 +42,7 @@
 	damage_type = BURN
 	nodamage = TRUE
 	flag = "energy"
-	temperature = 50
+	temperature = 0
 
 /mob/living/simple_animal/hostile/asteroid/basilisk/GiveTarget(new_target)
 	if(..()) //we have a target
