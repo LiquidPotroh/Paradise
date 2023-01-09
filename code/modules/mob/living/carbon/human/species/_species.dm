@@ -25,17 +25,19 @@
 	var/unarmed_type = /datum/unarmed_attack
 	var/silent_steps = 0          // Stops step noises
 
-	var/cold_level_1 = 260  // Cold damage level 1 below this point.
-	var/cold_level_2 = 200  // Cold damage level 2 below this point.
-	var/cold_level_3 = 120  // Cold damage level 3 below this point.
+	var/cold_level_1 = T0C + 35 // Cold damage level 1 below this point.
+	var/cold_level_2 = T0C + 30  // Cold damage level 2 below this point.
+	var/cold_level_3 = T0C + 25  // Cold damage level 3 below this point.
 	var/coldmod = 1 // Damage multiplier for being in a cold environment
 
-	var/heat_level_1 = 360  // Heat damage level 1 above this point.
-	var/heat_level_2 = 400  // Heat damage level 2 above this point.
-	var/heat_level_3 = 460 // Heat damage level 3 above this point; used for body temperature
+	var/heat_level_1 = T0C + 38 // Heat damage level 1 above this point.
+	var/heat_level_2 = T0C + 41 // Heat damage level 2 above this point.
+	var/heat_level_3 = T0C + 43 // Heat damage level 3 above this point; used for body temperature
 	var/heatmod = 1 // Damage multiplier for being in a hot environment
 
-	var/body_temperature = 310.15	//non-IS_SYNTHETIC species will try to stabilize at this temperature. (also affects temperature processing)
+	var/body_temperature = T37C	//non-IS_SYNTHETIC species will try to stabilize at this temperature. (also affects temperature processing)
+	var/high_temperature_stablizing = -0.1
+	var/low_temperature_stablizing = 0.1
 	var/reagent_tag                 //Used for metabolizing reagents.
 	var/hunger_drain = HUNGER_FACTOR
 	var/digestion_ratio = 1 //How quickly the species digests/absorbs reagents.

@@ -455,15 +455,76 @@
 //END FIRE CODE
 
 /mob/living/carbon/human/proc/stabilize_temperature_from_calories()
-	var/body_temperature_difference = dna.species.body_temperature - bodytemperature
+	//var/body_temperature_difference = dna.species.body_temperature - bodytemperature
+	if(bodytemperature < dna.species.cold_level_3 || bodytemperature > dna.species.heat_level_3)
+		death()
+		visible_message("You DIED")
+		visible_message("Температура [bodytemperature] попала в предел: [-INFINITY] - [dna.species.cold_level_3]")
+	if(bodytemperature > dna.species.cold_level_3 && bodytemperature < dna.species.cold_level_2)
+		visible_message("Температура [bodytemperature] попала в предел: [dna.species.cold_level_3] : [dna.species.cold_level_2]")
+		bodytemperature += 3 * dna.species.low_temperature_stablizing
+	if(bodytemperature > dna.species.cold_level_2 && bodytemperature < dna.species.cold_level_1)
+		visible_message("Температура [bodytemperature] попала в предел: [dna.species.cold_level_2] : [dna.species.cold_level_1]")
+		bodytemperature += 2 * dna.species.low_temperature_stablizing
+	if(bodytemperature > dna.species.cold_level_1 && bodytemperature < dna.species.body_temperature - dna.species.low_temperature_stablizing)
+		visible_message("Температура [bodytemperature] попала в предел: [dna.species.cold_level_1] : [dna.species.body_temperature - dna.species.low_temperature_stablizing]")
+		bodytemperature += dna.species.low_temperature_stablizing
+	if(bodytemperature > dna.species.body_temperature - dna.species.high_temperature_stablizing && bodytemperature < dna.species.heat_level_1)
+		visible_message("Температура [bodytemperature] попала в предел: [dna.species.heat_level_1] : [dna.species.body_temperature - dna.species.high_temperature_stablizing]")
+		bodytemperature += dna.species.high_temperature_stablizing
+	if(bodytemperature > dna.species.heat_level_1 && bodytemperature < dna.species.heat_level_2)
+		visible_message("Температура [bodytemperature] попала в предел: [dna.species.heat_level_1] : [dna.species.heat_level_2]")
+		bodytemperature += 2 * dna.species.high_temperature_stablizing
+	if(bodytemperature > dna.species.heat_level_2 && bodytemperature < dna.species.heat_level_3)
+		visible_message("Температура [bodytemperature] попала в предел: [dna.species.heat_level_2] : [dna.species.heat_level_3]")
+		bodytemperature += 3 * dna.species.high_temperature_stablizing
 
-	if(bodytemperature <= dna.species.cold_level_1) //260.15 is 310.15 - 50, the temperature where you start to feel effects.
-		bodytemperature += max((body_temperature_difference * metabolism_efficiency / BODYTEMP_AUTORECOVERY_DIVISOR), BODYTEMP_AUTORECOVERY_MINIMUM)
-	if(bodytemperature >= dna.species.cold_level_1 && bodytemperature <= dna.species.heat_level_1)
-		bodytemperature += body_temperature_difference * metabolism_efficiency / BODYTEMP_AUTORECOVERY_DIVISOR
-	if(bodytemperature >= dna.species.heat_level_1) //360.15 is 310.15 + 50, the temperature where you start to feel effects.
-		//We totally need a sweat system cause it totally makes sense...~
-		bodytemperature += min((body_temperature_difference / BODYTEMP_AUTORECOVERY_DIVISOR), -BODYTEMP_AUTORECOVERY_MINIMUM)	//We're dealing with negative numbers
+	// switch(bodytemperature)
+	// 	if(-INFINITY to dna.species.cold_level_3)
+	// 		//death()
+	// 		visible_message("You DIED")
+	// 		visible_message("Температура [bodytemperature] попала в предел: [-INFINITY] - [dna.species.cold_level_3]")
+	// 	if(dna.species.cold_level_3 to dna.species.cold_level_2)
+	// 		visible_message("Температура [bodytemperature] попала в предел: [dna.species.cold_level_3] : [dna.species.cold_level_2]")
+	// 		bodytemperature += 3 * dna.species.low_temperature_stablizing
+	// 	if(dna.species.cold_level_2 to dna.species.cold_level_1)
+	// 		visible_message("Температура [bodytemperature] попала в предел: [dna.species.cold_level_2] : [dna.species.cold_level_1]")
+	// 		bodytemperature += 2 * dna.species.low_temperature_stablizing
+	// 	if(dna.species.cold_level_1 to dna.species.body_temperature - 2 * dna.species.low_temperature_stablizing)
+	// 		visible_message("Температура [bodytemperature] попала в предел: [dna.species.cold_level_1] : [dna.species.body_temperature - 2 * dna.species.low_temperature_stablizing]")
+	// 		bodytemperature += dna.species.low_temperature_stablizing
+	// 	if(dna.species.heat_level_1 to dna.species.body_temperature - 2 * dna.species.high_temperature_stablizing)
+	// 		visible_message("Температура [bodytemperature] попала в предел: [dna.species.heat_level_1] : [dna.species.body_temperature - 2 * dna.species.high_temperature_stablizing]")
+	// 		bodytemperature += dna.species.high_temperature_stablizing
+	// 	if(dna.species.heat_level_1 to dna.species.heat_level_2)
+	// 		visible_message("Температура [bodytemperature] попала в предел: [dna.species.heat_level_1] : [dna.species.heat_level_2]")
+	// 		bodytemperature += 2 * dna.species.high_temperature_stablizing
+	// 	if(dna.species.heat_level_2 to dna.species.heat_level_3)
+	// 		visible_message("Температура [bodytemperature] попала в предел: [dna.species.heat_level_2] : [dna.species.heat_level_3]")
+	// 		bodytemperature += 3 * dna.species.high_temperature_stablizing
+	// 	if(dna.species.heat_level_3 to INFINITY)
+	// 		//death()
+	// 		visible_message("You DIED")
+	// 		visible_message("Температура [bodytemperature] попала в предел: [dna.species.heat_level_3] : [INFINITY]")
+
+	// if (bodytemperature < dna.species.cold_level_3 || bodytemperature > dna.species.heat_level_3)
+	// 	death()
+	// if (bodytemperature < dna.species.cold_level_2 || bodytemperature > dna.species.heat_level_3)
+
+	// //cold
+	// if (bodytemperature < dna.species.body_temperature - 2 * dna.species.low_temperature_stablizing)
+	// 	bodytemperature += dna.species.low_temperature_stablizing
+	// //heat
+	// if (bodytemperature > dna.species.body_temperature - 2 * dna.species.high_temperature_stablizing)
+	// 	bodytemperature += dna.species.high_temperature_stablizing
+
+	// if(bodytemperature <= dna.species.cold_level_1) //260.15 is 310.15 - 50, the temperature where you start to feel effects.
+	// 	bodytemperature += max((body_temperature_difference * metabolism_efficiency / BODYTEMP_AUTORECOVERY_DIVISOR), BODYTEMP_AUTORECOVERY_MINIMUM)
+	// if(bodytemperature >= dna.species.cold_level_1 && bodytemperature <= dna.species.heat_level_1)
+	// 	bodytemperature += body_temperature_difference * metabolism_efficiency / BODYTEMP_AUTORECOVERY_DIVISOR
+	// if(bodytemperature >= dna.species.heat_level_1) //360.15 is 310.15 + 50, the temperature where you start to feel effects.
+	// 	//We totally need a sweat system cause it totally makes sense...~
+	// 	bodytemperature += min((body_temperature_difference / BODYTEMP_AUTORECOVERY_DIVISOR), -BODYTEMP_AUTORECOVERY_MINIMUM)	//We're dealing with negative numbers
 
 
 	//This proc returns a number made up of the flags for body parts which you are protected on. (such as HEAD, UPPER_TORSO, LOWER_TORSO, etc. See setup.dm for the full list)
