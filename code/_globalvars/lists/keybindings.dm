@@ -14,6 +14,7 @@ GLOBAL_LIST_INIT(keybindings_groups, list(
 	"Silicon/IPC Emote" = KB_CATEGORY_EMOTE_SILICON,
 	"Animal Emote" = KB_CATEGORY_EMOTE_ANIMAL,
 	"Brain Emote" = KB_CATEGORY_EMOTE_BRAIN,
+	"Alien" = KB_CATEGORY_ALIEN,
 	"Alien Emote" = KB_CATEGORY_EMOTE_ALIEN,
 	"Admin" = KB_CATEGORY_ADMIN,
 	"Other" = KB_CATEGORY_UNSORTED,

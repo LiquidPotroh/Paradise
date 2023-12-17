@@ -40,6 +40,14 @@
 
 	return TRUE
 
+/obj/effect/proc_holder/spell/alien_spell/neurotoxin/can_cast(mob/user, charge_check = FALSE, show_message)
+	. = ..()
+
+/obj/effect/proc_holder/spell/alien_spell/neurotoxin/Click()
+	if(cast_check(FALSE, FALSE, usr))
+		choose_targets(usr)
+	return TRUE
+
 /obj/effect/proc_holder/spell/alien_spell/neurotoxin/after_cast(list/targets, mob/user)
 	. = ..()
 	if(should_remove_click_intercept(user))

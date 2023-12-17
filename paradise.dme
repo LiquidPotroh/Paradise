@@ -484,6 +484,7 @@
 #include "code\datums\helper_datums\topic_input.dm"
 #include "code\datums\keybindings\_keybindings.dm"
 #include "code\datums\keybindings\admin.dm"
+#include "code\datums\keybindings\alien.dm"
 #include "code\datums\keybindings\carbon.dm"
 #include "code\datums\keybindings\client.dm"
 #include "code\datums\keybindings\emote.dm"
