@@ -69,17 +69,17 @@
 //////////////////////////////Capturing////////////////////////////////////////////////////////
 /obj/item/soulstone/attack(mob/living/carbon/human/M, mob/living/user)
 	if(M == user)
-		return
+		return FALSE
 
 	if(!can_use(user))
 		user.Weaken(10 SECONDS)
 		user.emote("scream")
 		to_chat(user, "<span class='userdanger'>Your body is wracked with debilitating pain!</span>")
-		return
+		return FALSE
 
 	if(spent)
 		to_chat(user, "<span class='warning'>There is no power left in the shard.</span>")
-		return
+		return FALSE
 
 	if(!ishuman(M)) //If target is not a human
 		return ..()
@@ -99,7 +99,7 @@
 	if(optional)
 		if(!M.ckey)
 			to_chat(user, "<span class='warning'>They have no soul!</span>")
-			return
+			return FALSE
 
 		to_chat(user, "<span class='warning'>You attempt to channel [M]'s soul into [src]. You must give the soul some time to react and stand still...</span>")
 
@@ -134,12 +134,12 @@
 
 		if(!opt_in)
 			to_chat(user, "<span class='warning'>The soul resists your attempts at capturing it!</span>")
-			return
+			return FALSE
 
 		opt_in = FALSE
 
 		if(spent)//checking one more time against shenanigans
-			return
+			return FALSE
 
 	if(is_sacrifice_target(M.mind))
 		if(iscultist(user))

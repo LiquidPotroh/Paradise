@@ -146,7 +146,7 @@
 		last_throw = world.time
 
 /obj/item/tk_grab/attack(mob/living/M, mob/living/user, def_zone)
-	return
+	return FALSE
 
 /obj/item/tk_grab/is_equivalent(obj/item/I)
 	. = ..()

@@ -435,7 +435,7 @@ emp_act
 	var/obj/item/organ/external/affecting = get_organ(ran_zone(user.zone_selected))
 	if(!affecting)
 		to_chat(user, span_danger("They are missing that limb!"))
-		return TRUE
+		return FALSE
 	var/hit_area = parse_zone(affecting.limb_zone)
 
 	if(user != src)

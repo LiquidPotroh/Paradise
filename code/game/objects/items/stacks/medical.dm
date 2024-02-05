@@ -20,11 +20,11 @@
 /obj/item/stack/medical/attack(mob/living/M, mob/user)
 	if(!iscarbon(M) && !isanimal(M))
 		to_chat(user, "<span class='danger'>[src] cannot be applied to [M]!</span>")
-		return 1
+		return FALSE
 
 	if(!user.IsAdvancedToolUser())
 		to_chat(user, "<span class='danger'>You don't have the dexterity to do this!</span>")
-		return 1
+		return FALSE
 
 
 	if(ishuman(M))
@@ -33,51 +33,53 @@
 
 		if(isgolem(M))
 			to_chat(user, "<span class='danger'>This can't be used on golems!</span>")
-			return TRUE
+			return FALSE
 
 		if(!affecting)
 			to_chat(user, "<span class='danger'>That limb is missing!</span>")
-			return TRUE
+			return FALSE
 
 		if(affecting.is_robotic())
 			to_chat(user, "<span class='danger'>This can't be used on a robotic limb.</span>")
-			return TRUE
+			return FALSE
 
 		if(M == user && !unique_handling)
 			user.visible_message("<span class='notice'>[user] starts to apply [src] on [H]...</span>")
 			if(!do_mob(user, H, self_delay))
-				return TRUE
+				return FALSE
 
 		if(H.head && H.head.flags & THICKMATERIAL)
 			if(H.wear_suit && H.wear_suit.flags & THICKMATERIAL)
 				to_chat(user, "<span class='danger'>There is no thin material to inject into.")
-				return TRUE
+				return FALSE
 
-		return
+		return TRUE
 
 	if(isanimal(M))
 		var/mob/living/simple_animal/critter = M
 		if(!(critter.healable))
 			to_chat(user, "<span class='notice'>You cannot use [src] on [critter]!</span>")
-			return
+			return FALSE
 		else if (critter.health == critter.maxHealth)
 			to_chat(user, "<span class='notice'>[critter] is at full health.</span>")
-			return
+			return FALSE
 		else if(heal_brute < 1)
 			to_chat(user, "<span class='notice'>[src] won't help [critter] at all.</span>")
-			return
+			return FALSE
 
 		critter.heal_organ_damage(heal_brute, heal_burn)
 		user.visible_message("<span class='green'>[user] applies [src] on [critter].</span>", \
 							 "<span class='green'>You apply [src] on [critter].</span>")
 
 		use(1)
+		return TRUE
 
 	else
 		M.heal_organ_damage(heal_brute, heal_burn)
 		user.visible_message("<span class='green'>[user] applies [src] on [M].</span>", \
 							 "<span class='green'>You apply [src] on [M].</span>")
 		use(1)
+		return TRUE
 
 /obj/item/stack/medical/proc/heal(mob/living/M, mob/user)
 	var/mob/living/carbon/human/H = M
@@ -140,8 +142,10 @@
 		return ..()
 
 /obj/item/stack/medical/bruise_pack/attack(mob/living/M, mob/user)
-	if(..())
-		return TRUE
+	if(!..())
+		return FALSE
+
+	. = FALSE
 
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
@@ -158,6 +162,7 @@
 
 			H.UpdateDamageIcon()
 			use(1)
+			return TRUE
 		else
 			to_chat(user, "<span class='warning'>[affecting] is cut open, you'll need more than a bandage!</span>")
 
@@ -182,9 +187,9 @@
 /obj/item/stack/medical/bruise_pack/advanced/cyborg/attack(mob/living/M, mob/user)
 	if(!get_amount())
 		to_chat(user, "<span class='danger'>Not enough medical supplies!</span>")
-		return 1
+		return FALSE
 	else
-		.=..()
+		. = ..()
 
 
 //Ointment//
@@ -201,8 +206,10 @@
 	heal_burn = 10
 
 /obj/item/stack/medical/ointment/attack(mob/living/M, mob/user)
-	if(..())
-		return 1
+	if(!..())
+		return FALSE
+
+	. = FALSE
 
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
@@ -215,6 +222,7 @@
 
 			H.UpdateDamageIcon()
 			use(1)
+			return TRUE
 		else
 			to_chat(user, "<span class='warning'>[affecting] is cut open, you'll need more than some ointment!</span>")
 
@@ -233,9 +241,9 @@
 /obj/item/stack/medical/ointment/advanced/cyborg/attack(mob/living/M, mob/user)
 	if(!get_amount())
 		to_chat(user, "<span class='danger'>Not enough medical supplies!</span>")
-		return 1
+		return FALSE
 	else
-		.=..()
+		. = ..()
 
 //Medical Herbs//
 /obj/item/stack/medical/bruise_pack/comfrey
@@ -287,28 +295,28 @@
 /obj/item/stack/medical/splint/cyborg/attack(mob/living/M, mob/user)
 	if(!get_amount())
 		to_chat(user, span_danger("No splints left!"))
-		return TRUE
+		return FALSE
 	return ..()
 
 
 /obj/item/stack/medical/splint/attack(mob/living/carbon/human/target, mob/user)
 	. = ..()
-	if(. || !ishuman(target))
-		return .
+	if(!. || !ishuman(target))
+		return FALSE
 
 	var/obj/item/organ/external/bodypart = target.get_organ(user.zone_selected)
 	var/bodypart_name = bodypart.name
 
 	if(!(bodypart.limb_zone in available_splint_zones))
 		to_chat(user, span_danger("You can't apply a splint there!"))
-		return TRUE
+		return FALSE
 
 	if(bodypart.is_splinted())
 		to_chat(user, span_danger("[target]'s [bodypart_name] is already splinted!"))
 		if(alert(user, "Would you like to remove the splint from [target]'s [bodypart_name]?", "Splint removal.", "Yes", "No") == "Yes")
 			bodypart.remove_splint()
 			to_chat(user, span_notice("You remove the splint from [target]'s [bodypart_name]."))
-		return TRUE
+		return FALSE
 
 	if((target == user && self_delay > 0) || (target != user && other_delay > 0))
 		user.visible_message(
@@ -318,9 +326,9 @@
 		)
 
 	if(target == user && !do_mob(user, target, self_delay))
-		return TRUE
+		return FALSE
 	else if(!do_mob(user, target, other_delay))
-		return TRUE
+		return FALSE
 
 	user.visible_message(
 		span_notice("[user] applies [src] to [target == user ? "[user.p_their()]" : "[target]'s"] [bodypart_name]."),
@@ -329,7 +337,7 @@
 
 	bodypart.apply_splint()
 	use(1)
-
+	return TRUE
 
 /obj/item/stack/medical/splint/tribal
 	name = "tribal splints"

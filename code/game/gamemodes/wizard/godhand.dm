@@ -45,11 +45,11 @@
 
 /obj/item/melee/touch_attack/attack(mob/target, mob/living/carbon/user)
 	if(!iscarbon(user)) //Look ma, no hands
-		return
+		return FALSE
 	if(user.lying || user.handcuffed)
 		to_chat(user, "<span class='warning'>You can't reach out!</span>")
-		return
-	..()
+		return FALSE
+	. = ..()
 
 
 /obj/item/melee/touch_attack/afterattack(atom/target, mob/user, proximity)

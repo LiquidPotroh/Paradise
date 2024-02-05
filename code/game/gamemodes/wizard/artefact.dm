@@ -151,8 +151,8 @@ GLOBAL_LIST_EMPTY(multiverse)
 /obj/item/multisword/attack(mob/living/M as mob, mob/living/user as mob)  //to prevent accidental friendly fire or out and out grief.
 	if(M.real_name == user.real_name)
 		to_chat(user, "<span class='warning'>The [src] detects benevolent energies in your target and redirects your attack!</span>")
-		return
-	..()
+		return FALSE
+	. = ..()
 
 /obj/item/multisword/attack_self(mob/user)
 	if(user.mind.special_role == SPECIAL_ROLE_WIZARD_APPRENTICE)
@@ -530,21 +530,21 @@ GLOBAL_LIST_EMPTY(multiverse)
 		return ..()
 
 	if(!istype(user))
-		return
+		return FALSE
 
 	if(M.stat != DEAD)
 		to_chat(user, "<span class='warning'>This artifact can only affect the dead!</span>")
-		return
+		return FALSE
 
 	if((!M.mind || !M.client) && !M.grab_ghost())
 		to_chat(user,"<span class='warning'>There is no soul connected to this body...</span>")
-		return
+		return FALSE
 
 	check_spooky()//clean out/refresh the list
 
 	if(spooky_scaries.len >= 3 && !unlimited)
 		to_chat(user, "<span class='warning'>This artifact can only affect three undead at a time!</span>")
-		return
+		return FALSE
 	if(heresy)
 		spawnheresy(M)//oh god why
 	else
@@ -557,6 +557,7 @@ GLOBAL_LIST_EMPTY(multiverse)
 	to_chat(M, "<span class='userdanger'>You have been revived by </span><B>[user.real_name]!</B>")
 	to_chat(M, "<span class='userdanger'>[user.p_theyre(TRUE)] your master now, assist them even if it costs you your new life!</span>")
 	desc = "A shard capable of resurrecting humans as skeleton thralls[unlimited ? "." : ", [spooky_scaries.len]/3 active thralls."]"
+	return TRUE
 
 /obj/item/necromantic_stone/proc/check_spooky()
 	if(unlimited) //no point, the list isn't used.

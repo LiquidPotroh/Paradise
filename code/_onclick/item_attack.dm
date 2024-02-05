@@ -1,9 +1,9 @@
 /obj/item/proc/melee_attack_chain(mob/user, atom/target, params)
 	if(!tool_attack_chain(user, target) && pre_attackby(target, user, params))
-		// Return 1 in attackby() to prevent afterattack() effects (when safely moving items for example)
-		var/resolved = target.attackby(src, user, params)
-		if(!resolved && target && !QDELETED(src))
-			afterattack(target, user, 1, params) // 1: clicking something Adjacent
+		// Return TRUE in attackby() if need to call afterattack
+		var/successful_attack = target.attackby(src, user, params)
+		if(successful_attack && target && !QDELETED(src))
+			afterattack(target, user, TRUE, params)
 
 //Checks if the item can work as a tool, calling the appropriate tool behavior on the target
 //Note that if tool_act returns TRUE, then the tool won't call attack_by.
@@ -27,11 +27,13 @@
 // No comment
 /atom/proc/attackby(obj/item/W, mob/user, params)
 	if(SEND_SIGNAL(src, COMSIG_PARENT_ATTACKBY, W, user, params) & COMPONENT_NO_AFTERATTACK)
-		return TRUE
-	return FALSE
+		return FALSE
+	return TRUE
 
 /obj/attackby(obj/item/I, mob/living/user, params)
-	return ..() || (can_be_hit && I.attack_obj(src, user, params))
+	. = ..()
+	if(can_be_hit)
+		return . && I.attack_obj(src, user, params)
 
 /mob/living/attackby(obj/item/I, mob/living/user, params)
 	user.changeNext_move(CLICK_CD_MELEE)
@@ -39,6 +41,7 @@
 		return TRUE
 	return I.attack(src, user)
 
+///Returns TRUE if the attack hit, FALSE if it missed.
 /obj/item/proc/attack(mob/living/target, mob/living/user, def_zone)
 	SEND_SIGNAL(src, COMSIG_ITEM_ATTACK, target, user)
 	SEND_SIGNAL(user, COMSIG_MOB_ITEM_ATTACK, target, user)
@@ -69,7 +72,7 @@
 
 	if(force && (HAS_TRAIT(user, TRAIT_PACIFISM) || GLOB.pacifism_after_gt))
 		to_chat(user, "<span class='warning'>You don't want to harm other living beings!</span>")
-		return
+		return FALSE
 
 	if(!force)
 		playsound(target.loc, 'sound/weapons/tap.ogg', get_clamped_volume(), 1, -1)
@@ -97,15 +100,16 @@
 		return
 	user.changeNext_move(CLICK_CD_MELEE)
 	user.do_attack_animation(O)
-	O.attacked_by(src, user)
+	return O.attacked_by(src, user)
 
 /atom/movable/proc/attacked_by()
-	return
+	return TRUE
 
 /obj/attacked_by(obj/item/I, mob/living/user)
 	if(I.force)
 		user.visible_message("<span class='danger'>[user] has hit [src] with [I]!</span>", "<span class='danger'>You hit [src] with [I]!</span>")
 	take_damage(I.force, I.damtype, "melee", 1, get_dir(src, user))
+	return TRUE
 
 /mob/living/attacked_by(obj/item/I, mob/living/user, def_zone)
 	send_item_attack_message(I, user)
@@ -121,6 +125,7 @@
 		return TRUE //successful attack
 
 /mob/living/simple_animal/attacked_by(obj/item/I, mob/living/user)
+	. = FALSE
 	if(!I.force)
 		user.visible_message("<span class='warning'>[user] gently taps [src] with [I].</span>",\
 						"<span class='warning'>This weapon is ineffective, it does no damage!</span>")

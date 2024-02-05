@@ -377,8 +377,8 @@
 
 /obj/item/flashlight/emp/attack(mob/living/M as mob, mob/living/user as mob)
 	if(on && user.zone_selected == BODY_ZONE_PRECISE_EYES) // call original attack proc only if aiming at the eyes
-		..()
-	return
+		return ..()
+	return TRUE
 
 /obj/item/flashlight/emp/afterattack(atom/A as mob|obj, mob/user, proximity)
 	if(!proximity) return

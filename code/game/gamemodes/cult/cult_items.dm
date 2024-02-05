@@ -42,8 +42,8 @@
 			H.apply_damage(rand(force/2, force), BRUTE, pick(BODY_ZONE_L_ARM, BODY_ZONE_R_ARM))
 		else
 			user.adjustBruteLoss(rand(force/2, force))
-		return
-	..()
+		return FALSE
+	. = ..()
 
 /obj/item/melee/cultblade/pickup(mob/living/user)
 	if(HULK in user.mutations)

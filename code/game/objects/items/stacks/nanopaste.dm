@@ -17,13 +17,14 @@
 /obj/item/stack/nanopaste/cyborg/attack(mob/living/M as mob, mob/user as mob)
 	if(!get_amount())
 		to_chat(user, "<span class='danger'>Not enough nanopaste!</span>")
-		return
+		return FALSE
 	else
 		. = ..()
 
 /obj/item/stack/nanopaste/attack(mob/living/M as mob, mob/user as mob)
 	if(!istype(M) || !istype(user))
-		return 0
+		return FALSE
+	. = FALSE
 	if(istype(M,/mob/living/silicon/robot))	//Repairing cyborgs
 		var/mob/living/silicon/robot/R = M
 		if(R.getBruteLoss() || R.getFireLoss() || R.diseases?.len)
@@ -32,6 +33,7 @@
 			use(1)
 			user.visible_message("<span class='notice'>\The [user] applied some [src] at [R]'s damaged areas.</span>",\
 				"<span class='notice'>You apply some [src] at [R]'s damaged areas.</span>")
+			return TRUE
 		else
 			to_chat(user, "<span class='notice'>All [R]'s systems are nominal.</span>")
 
@@ -44,7 +46,7 @@
 				use(1)
 				M.CureAllDiseases()
 				user.visible_message("<span class='notice'>\The [user] applies some nanite paste at \the [M] to fix problems.</span>")
-				return
+				return TRUE
 			if(S.get_damage())
 				use(1)
 				var/remheal = 15
@@ -77,6 +79,7 @@
 					user.visible_message("<span class='notice'>\The [user] applies some nanite paste at \the [M]'s [E.name] with \the [src].</span>")
 				if(H.bleed_rate && ismachineperson(H))
 					H.bleed_rate = 0
+				return TRUE
 			else
 				to_chat(user, "<span class='notice'>Nothing to fix here.</span>")
 		else

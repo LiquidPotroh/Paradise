@@ -82,11 +82,9 @@
 
 /obj/item/hair_dye_bottle/attack(mob/living/carbon/M, mob/user)
 	if(user.a_intent != INTENT_HELP)
-		..()
-		return
+		return ..()
 	if(!(M in view(1)))
-		..()
-		return
+		return ..()
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
 		var/dye_list = list("hair", "alt. hair theme")
@@ -101,7 +99,7 @@
 		var/what_to_dye = input(user, "Choose an area to apply the dye", "Dye Application") in dye_list
 		if(!user.Adjacent(M))
 			to_chat(user, "You are too far away!")
-			return
+			return FALSE
 		user.visible_message(span_notice("[user] starts dying [M]'s [what_to_dye]!"), span_notice("You start dying [M]'s [what_to_dye]!"))
 		if(do_after(user, 50, target = H))
 			switch(what_to_dye)

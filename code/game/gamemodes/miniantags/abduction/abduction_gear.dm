@@ -175,16 +175,17 @@
 
 /obj/item/abductor/gizmo/attack(mob/living/M, mob/user)
 	if(!ScientistCheck(user))
-		return
+		return FALSE
 	if(!console)
 		to_chat(user, "<span class='warning'>The device is not linked to console!</span>")
-		return
+		return FALSE
 
 	switch(mode)
 		if(GIZMO_SCAN)
 			scan(M, user)
 		if(GIZMO_MARK)
 			mark(M, user)
+	return TRUE
 
 
 /obj/item/abductor/gizmo/afterattack(atom/target, mob/living/user, flag, params)
@@ -198,29 +199,30 @@
 
 	switch(mode)
 		if(GIZMO_SCAN)
-			scan(target, user)
+			return scan(target, user)
 		if(GIZMO_MARK)
-			mark(target, user)
+			return mark(target, user)
 
 /obj/item/abductor/gizmo/proc/scan(atom/target, mob/living/user)
 	if(ishuman(target))
 		console.AddSnapshot(target)
 		to_chat(user, "<span class='notice'>You scan [target] and add [target.p_them()] to the database.</span>")
+		return TRUE
+	return FALSE
 
 /obj/item/abductor/gizmo/proc/mark(atom/target, mob/living/user)
 	if(marked == target)
 		to_chat(user, "<span class='warning'>This specimen is already marked!</span>")
-		return
-	if(ishuman(target))
-		if(isabductor(target))
-			marked = target
-			to_chat(user, "<span class='notice'>You mark [target] for future retrieval.</span>")
-		else
-			prepare(target,user)
+		return FALSE
+	if(ishuman(target) && isabductor(target))
+		marked = target
+		to_chat(user, "<span class='notice'>You mark [target] for future retrieval.</span>")
+		return TRUE
 	else
-		prepare(target,user)
+		return prepare(target, user)
 
 /obj/item/abductor/gizmo/proc/prepare(atom/target, mob/living/user)
+	. = FALSE
 	if(get_dist(target,user)>1)
 		to_chat(user, "<span class='warning'>You need to be next to the specimen to prepare it for transport!</span>")
 		return
@@ -228,6 +230,7 @@
 	if(do_after(user, 100, target = target))
 		marked = target
 		to_chat(user, "<span class='notice'>You finish preparing [target] for transport.</span>")
+		return TRUE
 
 /obj/item/abductor/gizmo/Destroy()
 	if(console)
